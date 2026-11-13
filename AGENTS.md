@@ -7,29 +7,72 @@
 
 ---
 
-## 1. Engineering Role and Governance
+## 1. Daily Operating Routine
 
-All development in this repository operates under the authority and standards of an enterprise lead software architect, engineering manager, repository maintainer, and code reviewer.
-
-- **GitHub as the Source of Truth**: GitHub is the authoritative project management and development tracking system, not merely a file backup.
-- **Traceability**: Every line of production code, bugfix, refactor, and documentation update must trace back to a dedicated GitHub Issue, branch, self-reviewed Pull Request, and verified test suite.
-- **Data Integrity & Security**: Enterprise data safety, OWASP compliance, role-based access control (RBAC), and migration discipline supersede speed.
+Before performing any development work:
+1. **Read `AGENTS.md` and inspect the GitHub repository**:
+   - `git status`
+   - `gh issue list`
+   - `gh pr list`
+2. **GitHub Issues are the authoritative source of project work**:
+   - Never begin a meaningful feature, bug fix, refactor, or improvement without an associated GitHub Issue.
+3. **Traceability across all changes**:
+   - Always branch from `main` using structured naming: `feature/<issue>-<desc>`, `bugfix/<issue>-<desc>`.
+4. **Autonomous Self-Review and Rigorous Testing**:
+   - When work is completed, create or update a Pull Request referencing the issue (`Closes #<id>`).
+   - Perform a complete engineering self-review (documenting diff inspection, security checks, and test results).
+   - Run all relevant automated tests (`pytest -v`) and build verifications.
+   - Address any discovered defects directly on the branch.
+   - Merge the PR using squash merging once all acceptance criteria and quality gates are satisfied.
+5. **Continuous Backlog & Issue Hygiene**:
+   - Update the associated GitHub Issue and project tracking information.
+   - Maintain this workflow across every session. Do not rely on conversation history to remember project status.
+   - Never falsely report completed work or bypass repository security protections.
 
 ---
 
-## 2. GitHub Issue Tracking & Taxonomy
+## 2. Engineering Role and Governance
 
-No development work may occur without a corresponding GitHub Issue.
+All development in this repository operates under the authority and standards of an enterprise lead software architect, engineering manager, repository maintainer, and code reviewer.
 
-### Issue Structure Requirements
-Every GitHub Issue must clearly define:
-1. **Title**: Structured and descriptive (e.g., `feat(auth): Implement OAuth2 JWT and Role-Based Access Control`).
-2. **Objective / Problem Statement**: The business and architectural reason for the change.
-3. **Background & Technical Context**: Architecture components, models, or endpoints involved.
-4. **Scope of Work**: Specific bulleted deliverables.
-5. **Acceptance Criteria**: Verifiable testable conditions.
-6. **Definition of Done (DoD)**: Passing tests, linting, docs, and clean PR merge.
-7. **Priority & Labels**: Proper taxonomy metadata.
+- **GitHub as the Source of Truth**: GitHub is the authoritative project management and development tracking system, not merely a place to store code.
+- **Traceability**: Every line of production code, bugfix, refactor, and documentation update must trace back to a dedicated GitHub Issue, branch, self-reviewed Pull Request, and verified test suite.
+- **Data Integrity & Security**: Enterprise data safety, OWASP compliance, role-based access control (RBAC), and migration discipline supersede speed.
+- **Portfolio-Wide Consistency**: The same disciplined engineering standard applies across the organization's portfolio repositories (*AssetTrack*, *ReleaseOps*, *VulnWatch*, *InfraWatch*, *TeamFlow*).
+
+---
+
+## 3. Recommended GitHub Repository Settings
+
+To enforce engineering rigor directly within GitHub:
+
+| Setting | Standard Configuration | Implementation Status |
+| :--- | :--- | :--- |
+| **Default Branch** | `main` | Configured |
+| **Squash Merging** | Enabled (preferred for clean linear history) | Configured |
+| **Delete Merged Branches** | Automatically delete head branches upon merge | Configured |
+| **Branch Protection** | Required status checks & PR requirement on `main` | Enforced via workflow |
+| **Dependabot Alerts** | Enabled | Configured |
+| **Secret Scanning** | Enabled on repository | Configured |
+| **Code Scanning** | Enabled via GitHub Actions | In CI roadmap |
+| **Single-Developer Exception** | Do not require independent second-party approvals when operating as an autonomous solo developer/agent, but strictly require self-review and passing automated tests before merging | Standard policy |
+
+---
+
+## 4. GitHub Project Management & Board Lifecycle
+
+Work follows a visible 6-column lifecycle on the project board:
+
+```
+[ Backlog ] ──► [ Ready ] ──► [ In Progress ] ──► [ In Review ] ──► [ Testing ] ──► [ Done ]
+```
+
+1. **Backlog**: Approved future work and feature ideas.
+2. **Ready**: Requirements clearly defined with acceptance criteria.
+3. **In Progress**: Active development on a dedicated feature/bugfix branch.
+4. **In Review**: Pull request opened with self-review documentation.
+5. **Testing**: Automated test execution, regression verification, and CI checks.
+6. **Done**: Pull request merged, tests verified passing, and issue closed.
 
 ### Standard Label Taxonomy
 | Label Category | Labels | Description |
@@ -40,19 +83,15 @@ Every GitHub Issue must clearly define:
 | **Component** | `area:backend`, `area:frontend`, `area:database`, `area:devops`, `area:security` | Subsystem affected |
 
 ### Milestone Architecture
-Issues must be grouped into formal milestones:
-- **Milestone 1: Core Architecture & Persistence Foundation** (Backend models, SQLAlchemy 2.0, Alembic migrations, Database setup)
-- **Milestone 2: Security, Authentication & Audit Logging** (JWT auth, RBAC, structured audit trails)
-- **Milestone 3: Core IT Asset Management & Personnel Engine** (Assets, Categories, Departments, Employees, Conflict-free Assignments)
-- **Milestone 4: Software Licenses, Warranties & Maintenance** (Seat allocation pools, Maintenance calendar, Warranty tracking)
-- **Milestone 5: Advanced Business Engines & Reporting** (Depreciation algorithms, QR generation, PDF spec sheets, CSV import/export)
-- **Milestone 6: Enterprise User Interface & Dashboard** (React 19 + TypeScript + Vite + Tailwind CSS dashboard, analytics, forms)
-- **Milestone 7: Comprehensive Testing & Quality Verification** (Pytest suite, API integration tests, E2E tests)
-- **Milestone 8: Production Deployment, CI/CD & Portfolio Showcase** (Docker, Docker Compose, GitHub Actions, Portfolio documentation)
+- **v0.1.0 - Core Architecture & Backend Domain Services**: Models, migrations, auth/RBAC, asset registry, assignments, software licenses, maintenance.
+- **v0.2.0 - Enterprise Web UI & Dashboard Analytics**: Modern React 19 + TypeScript + Tailwind CSS dashboard and workflows.
+- **v0.3.0 - Advanced Workflows, QR/PDF & Data Exchange**: Depreciation calculation engine, QR generator, ReportLab PDF reports, CSV import/export.
+- **v0.4.0 - Test Automation, CI/CD & Security Hardening**: Full automated test coverage, GitHub Actions CI workflow, security audit.
+- **v1.0.0 - Production Release & Portfolio Documentation**: Docker Compose, production README, architecture diagrams, ERD, release notes.
 
 ---
 
-## 3. Mandatory Branching Strategy
+## 5. Mandatory Branching Strategy
 
 Development must **never** occur directly on the `main` or production branch.
 
@@ -66,34 +105,24 @@ Development must **never** occur directly on the `main` or production branch.
 - `infra/<issue-number>-<short-description>`
 
 *Examples:*
-- `feature/2-role-based-access-control`
-- `feature/5-asset-depreciation-engine`
-- `bugfix/14-prevent-concurrent-active-assignment`
+- `feature/7-enterprise-react-ui-dashboard`
+- `infra/10-docker-compose-production-setup`
 
 Branches must remain short-lived and focused on a single concern. Do not bundle unrelated tasks.
 
 ---
 
-## 4. Pull Request (PR) Requirements & Traceability
+## 6. Pull Request Requirements & Autonomous Self-Review
 
 Every code modification must be introduced via a GitHub Pull Request.
 
-### PR Description Template
-Every PR must include:
-1. **Summary of Changes**: Clear explanation of what was built or altered.
-2. **Problem / Motivation**: Why this change is necessary.
-3. **Linked Issue**: GitHub closing syntax (e.g., `Closes #12`).
-4. **Implementation Details**: Key classes, schemas, endpoints, or UI components modified.
-5. **Testing Performed**: Output of automated test runs, edge cases verified, or manual verification steps.
-6. **Security & Performance Considerations**: RBAC impacts, database query considerations, migration risks.
-7. **Database Migrations**: Explicit notice if schema migrations are included.
+### Honest Review Distinction
+> An AI agent cannot independently provide a genuinely independent second-person human code review.  
+> Its self-review is valuable and mandatory, but must never be misrepresented as independent human approval.  
+> Every PR merged autonomously must record a documented **Engineering Self-Review** detailing verification steps, test output, and checklist satisfaction.
 
----
-
-## 5. Autonomous Pull Request Review & Merge Protocol
-
-AI agents and maintainers have autonomous authority to manage, review, and merge eligible pull requests without interrupting the user for routine steps, provided the following rigorous review sequence is executed:
-
+### Self-Review Sequence
+Before merging any pull request:
 1. **Diff Inspection**: Inspect the complete git diff for unintentional modifications, debug code, or extraneous files.
 2. **Requirements Verification**: Ensure all acceptance criteria of the linked issue are satisfied.
 3. **Security Audit**: Verify inputs are validated with Pydantic/type checks, permissions are enforced at endpoints, and no secrets/tokens are exposed.
@@ -106,7 +135,7 @@ AI agents and maintainers have autonomous authority to manage, review, and merge
 
 ---
 
-## 6. Definition of Done (DoD)
+## 7. Definition of Done (DoD)
 
 A task or issue is **never** considered done merely because code was written.
 
@@ -115,28 +144,10 @@ A task is officially **Done** only when:
 - [x] All acceptance criteria are satisfied.
 - [x] Relevant unit and integration tests are written and passing.
 - [x] Regression testing confirms no existing functionality is broken.
-- [x] Code has undergone self-review or peer review.
+- [x] Code has undergone documented self-review or peer review.
 - [x] Documentation (README, AGENTS.md, or architecture docs) is updated if applicable.
 - [x] PR is merged cleanly into `main`.
 - [x] The associated GitHub Issue is closed.
-
----
-
-## 7. Session Start & Continuation Protocol
-
-At the start of every session:
-1. Read `AGENTS.md`.
-2. Inspect `git status`, branch state, and remotes.
-3. Query open GitHub issues and milestones using `gh issue list`.
-4. Check open pull requests using `gh pr list`.
-5. Identify the next prioritized task from the backlog.
-6. Create or checkout the appropriate feature branch.
-
-At the end of every session:
-1. Ensure all work in progress is cleanly committed or documented.
-2. Verify all tests pass.
-3. Update issue statuses and PR states.
-4. Provide a clear status summary linking all relevant GitHub resources.
 
 ---
 
@@ -150,8 +161,6 @@ All commits must follow the **Conventional Commits** specification:
 - `docs(<scope>): <description>` (documentation updates)
 - `chore(<scope>): <description>` (tooling, dependencies, config)
 - `perf(<scope>): <description>` (performance optimizations)
-
-*Example:* `feat(depreciation): implement straight-line and double-declining calculation engine`
 
 ---
 
